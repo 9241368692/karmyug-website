@@ -1,74 +1,43 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Karmyug Services | AI & Data Projects</title>
+  <title>Karmyug Services</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- AOS Animation CSS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body>
 
-  <!-- 🔷 NAVIGATION BAR -->
-  <nav class="navbar">
+  <!-- 🌐 Navigation Bar Start -->
+  <nav>
     <div class="logo">Karmyug Services</div>
     <ul class="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="index.html">Home</a></li>
       <li><a href="services.html">Services</a></li>
       <li><a href="join.html">Join</a></li>
       <li><a href="contact.html">Contact</a></li>
-      <li><a href="login.html" class="login-btn">Login</a></li>
+      <li><a href="login.html" class="login-link">Login</a></li>
     </ul>
   </nav>
+  <!-- 🌐 Navigation Bar End -->
 
-  <!-- 🌟 HERO SECTION -->
-  <header class="hero">
-    <h1>Welcome to Karmyug Services</h1>
-    <p>Your Partner in AI Data, Transcription & Digital Workforce</p>
-    <a href="join.html" class="cta-button">Join Projects Now</a>
-  </header>
-
-  <!-- 💼 ABOUT US -->
-  <section class="about" id="about">
-    <caption><strong>About Karmyug</strong></caption>
-    <p>Karmyug is a growing community-driven company helping people earn from AI data work — transcription, annotation, translation & surveys. We aim to empower rural India through tech-based digital jobs.</p>
+  <!-- 🎬 Hero Section -->
+  <section id="hero" data-aos="fade-up">
+    <img src="assets/logo.png" alt="Karmyug Logo" class="hero-logo" />
+    <h1>Welcome to <span>Karmyug Services</span></h1>
+    <p>Your AI Data Partner for Scalable Growth</p>
+    <a href="services.html" class="cta-button">Explore Services</a>
   </section>
 
-  <!-- ⚙️ SERVICES SECTION -->
-  <section class="services" id="services">
-    <caption><strong>Our Services</strong></caption>
-    <div class="service-boxes">
-      <div class="box">
-        <h3>Audio Transcription</h3>
-        <p>Convert speech to text for multiple Indian languages with accuracy.</p>
-      </div>
-      <div class="box">
-        <h3>Text Annotation</h3>
-        <p>Label and highlight data for machine learning training.</p>
-      </div>
-      <div class="box">
-        <h3>Translation</h3>
-        <p>Translate documents between Indian regional languages and English.</p>
-      </div>
-      <div class="box">
-        <h3>AI Dataset Creation</h3>
-        <p>We collect, clean and deliver custom datasets for AI model development.</p>
-      </div>
-    </div>
-  </section>
+  <!-- 🌟 Animated Background (optional video bg if you want later) -->
+  <!-- <video autoplay muted loop class="bg-video">
+    <source src="assets/bg.mp4" type="video/mp4">
+  </video> -->
 
-  <!-- 🚀 CTA SECTION -->
-  <section class="cta">
-    <caption><strong>Start Earning from Home</strong></caption>
-    <p>No investment needed. Just join a project, and start earning with your skill and time.</p>
-    <a href="join.html" class="cta-button">Apply for Projects</a>
-  </section>
-
-  <!-- 🧾 FOOTER -->
-  <footer>
-    <p>&copy; 2025 Karmyug Services. All rights reserved.</p>
-    <p>Made with ❤️ by Team Karmyug</p>
-  </footer>
-
+  <!-- AOS Animation Script -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>AOS.init();</script>
 </body>
 </html>
