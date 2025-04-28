@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Dashboard | Karmyug</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 🔐 AUTH CHECK SCRIPT -->
+  <script>
+    // Check if a user is logged in
+    const loggedInUserId = localStorage.getItem("loggedInUser");
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+
+    if (!loggedInUserId || users.length === 0) {
+      alert("Unauthorized access. Please login first.");
+      localStorage.clear(); // Clear junk if any
+      window.location.href = "login.html"; // Redirect to login
+    } else {
+      const currentUser = users.find(u => u.id === loggedInUserId);
+      if (!currentUser) {
+        alert("Session expired or user not found. Please login again.");
+        localStorage.clear();
+        window.location.href = "login.html";
+      } else {
+        console.log("✅ Authenticated User:", currentUser.name);
+      }
+    }
+  </script>
+
+  <!-- 🧭 NAVIGATION -->
+  <nav>
+    <div class="logo">Karmyug Services</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="join.html">Join</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- 📊 DASHBOARD CONTENT -->
+  <section class="dashboard">
+    <h2>User Dashboard</h2>
+
+    <!-- 🔍 SEARCH & FILTER -->
+    <div class="filters">
+      <input type="text" id="searchInput" placeholder="Search projects..." />
+      <select id="filterStatus">
+        <option value="all">All</option>
+        <option value="ongoing">Ongoing</option>
+        <option value="upcoming">Upcoming</option>
+      </select>
+    </div>
+
+    <!-- 📋 PROJECT LIST -->
+    <div id="projectList" class="project-list">
+      <!-- Projects will be inserted here -->
+    </div>
+  </section>
+
+  <!-- 📜 SCRIPTS -->
+  <script>
+    // 🗂️ Dummy Project Data
+    const projects = [
+      {
+        title: 'Hindi Transcription',
+        status: 'ongoing',
+        language: 'Hindi',
+        skill: 'Typing, Listening',
+        requirement: 'Laptop, Good Internet',
+        description: 'Transcribe audio files in Hindi.'
+      },
+      {
+        title: 'Bengali Annotation',
+        status: 'upcoming',
+        language: 'Bengali',
+        skill: 'Annotation',
+        requirement: 'Basic Computer Knowledge',
+        description: 'Label Bengali text data for AI training.'
+      },
+      {
+        title: 'Telugu Translation',
+        status: 'ongoing',
+        language: 'Telugu',
+        skill: 'Fluency in Telugu & English',
+        requirement: 'Strong grammar skills',
+        description: 'Translate content between Telugu and English.'
+      }
+    ];
+
+    // 🧠 Render Projects with Search & Filter
+    function renderProjects() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('filterStatus').value;
+      const container = document.getElementById('projectList');
+
+      container.innerHTML = '';
+
+      const filtered = projects.filter(p => {
+        const matchesSearch = p.title.toLowerCase().includes(search) || p.description.toLowerCase().includes(search);
+        const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
+        return matchesSearch && matchesStatus;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<p>No projects found.</p>';
+        return;
+      }
+
+      filtered.forEach(project => {
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.innerHTML = `
+          <h3>${project.title}</h3>
+          <p><strong>Status:</strong> ${project.status}</p>
+          <p><strong>Language:</strong> ${project.language}</p>
+          <p><strong>Skill Required:</strong> ${project.skill}</p>
+          <p><strong>Requirement:</strong> ${project.requirement}</p>
+          <p>${project.description}</p>
+          <button onclick="joinProject('${project.title}')">Join Project</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 🧾 Join Project Button
+    function joinProject(projectTitle) {
+      alert(`You have requested to join: ${projectTitle}`);
+    }
+
+    // 🔁 Event Listeners
+    document.getElementById('searchInput').addEventListener('input', renderProjects);
+    document.getElementById('filterStatus').addEventListener('change', renderProjects);
+
+    // 🔃 Load on Page Load
+    window.onload = renderProjects;
+  </script>
+
+</body>
+</html>
+
