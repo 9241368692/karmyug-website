@@ -1,0 +1,19 @@
+document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+  
+    const role = document.getElementById('role').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+  
+    // Dummy login: Replace this with real backend later
+    if ((role === 'admin' && username === 'admin' && password === 'admin123') ||
+        (role === 'user' && username === 'user' && password === 'user123')) {
+      
+      // Store role in localStorage
+      localStorage.setItem('userRole', role);
+      window.location.href = 'dashboard.html';
+    } else {
+      document.getElementById('loginError').textContent = "Invalid credentials.";
+    }
+  });
+  
