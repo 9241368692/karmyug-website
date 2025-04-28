@@ -1,0 +1,331 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard | Karmyug</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    form input, form select, form textarea {
+      display: block;
+      margin-bottom: 1rem;
+      padding: 0.6rem;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .project-list, .user-info {
+      margin-top: 2rem;
+    }
+
+    .project-card, .user-card {
+      background: #111;
+      color: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #00f5d4;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .project-card h4, .user-card h4 {
+      margin-bottom: 0.5rem;
+      color: #00f5d4;
+    }
+
+    .project-card p, .user-card p {
+      margin: 0.3rem 0;
+    }
+
+    .project-card .actions, .user-card .actions {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .project-card button, .user-card button {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      margin-left: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .project-card button.edit, .user-card button.edit {
+      background: #007bff;
+    }
+
+    .history-section {
+      margin-top: 3rem;
+    }
+
+    .history-section ul {
+      background: #222;
+      color: white;
+      padding: 1rem;
+      border-radius: 8px;
+      list-style: inside square;
+    }
+
+    .error {
+      color: red;
+      margin-bottom: 1rem;
+    }
+
+    .project-card:hover, .user-card:hover {
+      background: #1c1c1c;
+      transform: translateY(-2px);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .project-card .actions button:hover, .user-card .actions button:hover {
+      opacity: 0.85;
+    }
+
+    @media (max-width: 768px) {
+      nav ul.nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .project-card, .user-card {
+        font-size: 14px;
+      }
+
+      form input, form select, form textarea {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">Karmyug Admin Panel</div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="login.html">Logout</a></li>
+    </ul>
+  </nav>
+
+  <section id="admin-dashboard">
+    <h2>Create New Project</h2>
+    <form id="projectForm">
+      <div class="error" id="formError"></div>
+      <input type="text" id="projectName" placeholder="Project Name" required />
+      <textarea id="description" placeholder="Project Description" required></textarea>
+      <input type="text" id="language" placeholder="Language (e.g., Hindi, Telugu)" required />
+      <input type="text" id="skills" placeholder="Skills Required (e.g., Annotation, Transcription)" required />
+      <input type="text" id="requirements" placeholder="Any special requirements" />
+      <select id="projectStatus" required>
+        <option value="">Select Status</option>
+        <option value="ongoing">Ongoing</option>
+        <option value="upcoming">Upcoming</option>
+      </select>
+      <button type="submit">Create Project</button>
+    </form>
+
+    <div class="project-list">
+      <h3>Ongoing Projects</h3>
+      <div id="ongoingProjects"></div>
+
+      <h3>Upcoming Projects</h3>
+      <div id="upcomingProjects"></div>
+    </div>
+
+    <h2>Create New User</h2>
+    <form id="userForm">
+      <input type="text" id="userName" placeholder="User Name" required />
+      <input type="text" id="userId" placeholder="User ID" required />
+      <input type="password" id="userPassword" placeholder="Password" required />
+      <button type="submit">Create User</button>
+    </form>
+
+    <div class="user-info">
+      <h3>Users Information</h3>
+      <div id="userDetails"></div>
+    </div>
+
+    <div class="history-section">
+      <h3>Activity History</h3>
+      <ul id="projectHistory"></ul>
+    </div>
+  </section>
+
+  <script>
+    const form = document.getElementById('projectForm');
+    const userForm = document.getElementById('userForm');
+    const ongoingList = document.getElementById('ongoingProjects');
+    const upcomingList = document.getElementById('upcomingProjects');
+    const historyList = document.getElementById('projectHistory');
+    const userDetails = document.getElementById('userDetails');
+    const formError = document.getElementById('formError');
+
+    let projects = JSON.parse(localStorage.getItem('projects')) || [];
+    let history = JSON.parse(localStorage.getItem('history')) || [];
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+
+    function renderProjects() {
+      ongoingList.innerHTML = '';
+      upcomingList.innerHTML = '';
+      projects.forEach((project, index) => {
+        const card = document.createElement('div');
+        card.classList.add('project-card');
+        card.innerHTML = `
+          <div class="actions">
+            <button class="edit" onclick="editProject(${index})">Edit</button>
+            <button onclick="deleteProject(${index})">Delete</button>
+          </div>
+          <h4>${project.name}</h4>
+          <p><strong>Description:</strong> ${project.description}</p>
+          <p><strong>Language:</strong> ${project.language}</p>
+          <p><strong>Skills:</strong> ${project.skills}</p>
+          <p><strong>Requirements:</strong> ${project.requirements || 'N/A'}</p>
+        `;
+        if (project.status === 'ongoing') {
+          ongoingList.appendChild(card);
+        } else {
+          upcomingList.appendChild(card);
+        }
+      });
+    }
+
+    function renderUsers() {
+      userDetails.innerHTML = '';
+      users.forEach((user, index) => {
+        const userCard = document.createElement('div');
+        userCard.classList.add('user-card');
+        userCard.innerHTML = `
+          <div class="actions">
+            <button class="edit" onclick="editUser(${index})">Edit</button>
+            <button onclick="deleteUser(${index})">Delete</button>
+          </div>
+          <h4>${user.name}</h4>
+          <p><strong>User ID:</strong> ${user.userId}</p>
+          <p><strong>Password:</strong> ${user.password}</p>
+        `;
+        userDetails.appendChild(userCard);
+      });
+    }
+
+    function renderHistory() {
+      historyList.innerHTML = '';
+      history.forEach(entry => {
+        const li = document.createElement('li');
+        li.textContent = `${entry.time} - ${entry.action}`;
+        historyList.appendChild(li);
+      });
+    }
+
+    function logHistory(action) {
+      const entry = {
+        time: new Date().toLocaleString(),
+        action: action
+      };
+      history.unshift(entry);
+      if (history.length > 20) history.pop();
+      localStorage.setItem('history', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function deleteProject(index) {
+      if (confirm('Are you sure you want to delete this project?')) {
+        const removed = projects.splice(index, 1)[0];
+        localStorage.setItem('projects', JSON.stringify(projects));
+        logHistory(`Deleted project: ${removed.name}`);
+        renderProjects();
+      }
+    }
+
+    function deleteUser(index) {
+      if (confirm('Are you sure you want to delete this user?')) {
+        const removed = users.splice(index, 1)[0];
+        localStorage.setItem('users', JSON.stringify(users));
+        logHistory(`Deleted user: ${removed.name}`);
+        renderUsers();
+      }
+    }
+
+    function editProject(index) {
+      const project = projects[index];
+      document.getElementById('projectName').value = project.name;
+      document.getElementById('description').value = project.description;
+      document.getElementById('language').value = project.language;
+      document.getElementById('skills').value = project.skills;
+      document.getElementById('requirements').value = project.requirements;
+      document.getElementById('projectStatus').value = project.status.toLowerCase();
+      deleteProject(index);
+    }
+
+    function editUser(index) {
+      const user = users[index];
+      document.getElementById('userName').value = user.name;
+      document.getElementById('userId').value = user.userId;
+      document.getElementById('userPassword').value = user.password;
+      deleteUser(index);
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      formError.textContent = '';
+
+      const name = document.getElementById('projectName').value.trim();
+      const description = document.getElementById('description').value.trim();
+      const language = document.getElementById('language').value.trim();
+      const skills = document.getElementById('skills').value.trim();
+      const requirements = document.getElementById('requirements').value.trim();
+      const status = document.getElementById('projectStatus').value.toLowerCase();
+
+      if (!name || !description || !language || !skills || !status) {
+        formError.textContent = 'Please fill out all required fields before submitting.';
+        return;
+      }
+
+      const newProject = {
+        name,
+        description,
+        language,
+        skills,
+        requirements,
+        status
+      };
+
+      projects.push(newProject);
+      localStorage.setItem('projects', JSON.stringify(projects));
+      logHistory(`Created project: ${newProject.name}`);
+      renderProjects();
+      form.reset();
+    });
+
+    userForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const userName = document.getElementById('userName').value.trim();
+      const userId = document.getElementById('userId').value.trim();
+      const userPassword = document.getElementById('userPassword').value.trim();
+
+      if (!userName || !userId || !userPassword) {
+        alert('Please fill all user fields');
+        return;
+      }
+
+      const newUser = { name: userName, userId, password: userPassword };
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
+      logHistory(`Created user: ${userName}`);
+      renderUsers();
+      userForm.reset();
+    });
+
+    renderProjects();
+    renderUsers();
+    renderHistory();
+  </script>
+</body>
+</html>
+
